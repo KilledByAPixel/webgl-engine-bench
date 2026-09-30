@@ -1,0 +1,27 @@
+{
+  "name": "webgl-engine-bench",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "vendor": "node tools/vendor.mjs",
+    "atlas": "node tools/make-atlas.mjs",
+    "serve": "node tools/serve.mjs",
+    "verify": "node tools/verify.mjs",
+    "bench": "node tools/run.mjs",
+    "bench:quick": "node tools/run.mjs --quick",
+    "summary": "node tools/summary.mjs",
+    "results": "node tools/summary.mjs --write"
+  },
+  "engines": {
+    "node": ">=21"
+  },
+  "devDependencies": {
+    "babylonjs": "9.28.0",
+    "phaser": "4.2.1",
+    "pixi.js": "8.21.0",
+    "playcanvas": "2.22.6",
+    "playwright": "1.63.0",
+    "three": "0.186.1"
+  }
+}

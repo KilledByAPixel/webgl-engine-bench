@@ -1,0 +1,9 @@
+node_modules/
+verify/
+# local development material, not part of the public benchmark
+.superpowers/
+.claude/
+docs/
+# only full runs are published; quick, extended-quick and smoke runs stay local
+results/*-quick*.json
+results/*-fixtures.json

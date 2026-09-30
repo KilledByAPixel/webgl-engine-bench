@@ -1,0 +1,16 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Bench host</title>
+<script type="importmap">
+{ "imports": { "pixi.js": "./vendor/pixi.min.mjs", "three": "./vendor/three.module.js", "three/webgpu": "./vendor/three.webgpu.js",
+  "phaser": "./vendor/phaser.esm.min.js", "playcanvas": "./vendor/playcanvas.min.mjs" } }
+</script>
+<style>
+  html, body { margin: 0; background: #000; overflow: hidden; }
+  #stage { position: relative; width: 1280px; height: 720px; overflow: hidden; }
+  #stage canvas { position: absolute; left: 0; top: 0; width: 1280px !important; height: 720px !important; }
+</style></head>
+<body><div id="stage"></div>
+<script type="module">
+  import { runHost } from './harness/loop.js';
+  runHost(new URLSearchParams(location.search), document.getElementById('stage'));
+</script></body></html>

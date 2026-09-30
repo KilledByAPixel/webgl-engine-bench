@@ -1,0 +1,52 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>WebGL Engine Bench</title>
+<style>
+  body { font: 14px system-ui, sans-serif; margin: 16px; background: #111; color: #ddd; }
+  table { border-collapse: collapse; margin: 12px 0; } td, th { padding: 4px 10px; border-bottom: 1px solid #333; text-align: right; }
+  td:first-child, th:first-child, td:nth-child(2) { text-align: left; } .err { color: #f77; }
+  #frames { margin-top: 12px; }
+</style></head>
+<body>
+<h1>WebGL Engine Bench</h1>
+<p>LittleJS vs PixiJS (2D) and Three.js (3D). Keep this tab visible while it runs. Each scene runs in its own iframe below.</p>
+<div id="controls"></div>
+<button id="run">Run</button> <button id="save" disabled>Download JSON</button> <span id="status"></span>
+<div id="frames"></div>
+<div id="results"></div>
+<script type="module">
+  import { TESTS } from './harness/manifest.js';
+  import { runSuite, summarize } from './harness/runner.js';
+  const fixtures = new URLSearchParams(location.search).has('fixtures');
+  const $ = id => document.getElementById(id);
+  const tests = Object.keys(TESTS);
+  $('controls').innerHTML = tests.map(t => `<label><input type=checkbox value=${t} checked> ${t}</label>`).join(' ')
+    + ` &nbsp; repeats <input id=repeats type=number value=3 min=1 max=10 style="width:3em">`
+    + ` &nbsp; <label title="coarser search, fewer frames: about 5 minutes for 1 repeat"><input id=quick type=checkbox> quick rough check</label>`
+    + ` &nbsp; <label title="also Phaser, Babylon, PlayCanvas and Pixi/Three on WebGPU"><input id=extended type=checkbox> extended (other engines + WebGPU)</label>`;
+  $('quick').onchange = () => { $('repeats').value = $('quick').checked ? 1 : 3; };
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  let last, quickRun = false;
+  const render = runs => {
+    $('results').innerHTML = (quickRun ? '<p><b>Quick mode: rough numbers</b> (coarser search, fewer frames). Use a full run for anything you publish.</p>' : '') + '<table><tr><th>test</th><th>scene</th><th>max N @60fps (median)</th><th>range</th>'
+      + '<th>vs best</th><th>ms/frame @ ref N</th><th>render CPU ms @ ref N</th><th>shared sim ms @ ref N</th></tr>'
+      + summarize(runs).map(r => r.errors.length && !r.maxN.length
+        ? `<tr><td>${r.test}</td><td>${r.scene}</td><td class=err colspan=6>error: ${esc(r.errors[0].split('\n')[0])}</td></tr>`
+        : `<tr><td>${r.test}</td><td>${r.scene}${r.errors.length ? ` (${r.errors.length}/${r.errors.length + r.maxN.length} repeats failed)` : ''}</td><td>${r.maxNMedian.toLocaleString()}${r.capped ? '+' : ''}</td>`
+          + `<td>${r.maxNMin.toLocaleString()}–${r.maxNMax.toLocaleString()}</td><td>${(r.ratio * 100).toFixed(0)}%</td>`
+          + `<td>${r.refMsMedian.toFixed(2)}</td><td>${r.refCpuMedian.toFixed(2)}</td><td>${r.refSimMedian.toFixed(2)}</td></tr>`).join('') + '</table>';
+  };
+  window.runSuite = async (opts = {}) => {
+    $('status').textContent = 'running…'; quickRun = !!opts.quick;
+    last = await runSuite({ fixtures, ...opts }, $('frames'), (runs, ...a) => { render(runs); window.benchProgress?.(runs); });
+    render(last.runs); $('status').textContent = 'done'; $('save').disabled = false;
+    return last;
+  };
+  $('run').onclick = () => window.runSuite({
+    tests: [...document.querySelectorAll('#controls input[type=checkbox]:checked')].map(i => i.value),
+    repeats: +$('repeats').value, quick: $('quick').checked, extended: $('extended').checked });
+  $('save').onclick = () => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(last, null, 2)], { type: 'application/json' }));
+    a.download = `bench-${last.date.slice(0, 10)}${last.quick ? '-quick' : ''}.json`; a.click();
+  };
+</script></body></html>

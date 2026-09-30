@@ -1,0 +1,49 @@
+name: Submit results
+description: Share a full benchmark run from your machine
+title: "Results: <CPU> / <GPU> / <browser>"
+labels: [results]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks! Please submit a **full run** (`npm run bench`, 3 repeats) made on an otherwise idle machine with the display awake — see RUN.md's checklist. Quick runs are too rough to compare.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Paste the output of `npm run summary -- results/<your-file>.json`.
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: file
+    attributes:
+      label: Results file
+      description: Drag the `.json` file from `results/` into this box (GitHub attaches it).
+    validations:
+      required: true
+  - type: dropdown
+    id: power
+    attributes:
+      label: Machine
+      options:
+        - Desktop
+        - Laptop, plugged in
+        - Laptop, on battery
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything unusual?
+      description: Other apps running, thermal throttling, power-saving mode, a different browser, changes to the code, etc.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I ran `npm run bench` (full run), not the quick mode
+          required: true
+        - label: I did not modify the scenes or harness (or I described my changes above)
+          required: true
