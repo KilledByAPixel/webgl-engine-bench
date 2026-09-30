@@ -1,6 +1,7 @@
-// Copies pinned engine builds into vendor/ and records exact versions.
-// LittleJS comes from a local checkout (LITTLEJS_DIR, default C:/dev/GitHub/LittleJS) so unreleased fixes are
-// benchmarked; its commit is recorded. Published runs should point LITTLEJS_DIR at an npm release instead.
+// Copies pinned engine builds (and their licences) into vendor/ and records exact versions.
+// Pixi, Three, Phaser, PlayCanvas and Babylon come from node_modules (versions pinned in package.json).
+// LittleJS comes from a LittleJS git checkout named by LITTLEJS_DIR, so a specific commit can be benchmarked; its commit
+// is recorded. Without LITTLEJS_DIR the LittleJS build already in vendor/ is kept as it is.
 import { copyFileSync, mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { join } from 'node:path';
@@ -8,8 +9,8 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const vendor = join(root, 'vendor');
-const ljs = process.env.LITTLEJS_DIR || 'C:/dev/GitHub/LittleJS';
-mkdirSync(vendor, { recursive: true });
+const ljs = process.env.LITTLEJS_DIR;
+mkdirSync(join(vendor, 'LICENSES'), { recursive: true });
 
 const copy = (from, to) => {
   if (!existsSync(from)) throw new Error('missing ' + from);
@@ -26,25 +27,32 @@ copy(nm('three/build/three.webgpu.js'), 'three.webgpu.js'); // imports ./three.c
 copy(nm('phaser/dist/phaser.esm.min.js'), 'phaser.esm.min.js');
 copy(nm('playcanvas/build/playcanvas.min.mjs'), 'playcanvas.min.mjs');
 copy(nm('babylonjs/babylon.js'), 'babylon.js');
-// each engine's licence travels with its build (see vendor/LICENSES/README.md)
-mkdirSync(join(vendor, 'LICENSES'), { recursive: true });
+
+// each engine's licence travels with its build (see vendor/LICENSES/README.md); Apache-2.0 also requires Babylon's NOTICE
 for (const [from, to] of [['pixi.js/LICENSE', 'pixi.js.txt'], ['three/LICENSE', 'three.txt'], ['phaser/LICENSE.md', 'phaser.txt'],
-  ['playcanvas/LICENSE', 'playcanvas.txt'], ['babylonjs/license.md', 'babylonjs.txt']]) copy(nm(from), join('LICENSES', to));
-// the committed build, byte for byte: the working tree copy can carry CRLF from core.autocrlf
-writeFileSync(join(vendor, 'littlejs.release.js'), execSync(`git -C "${ljs}" show HEAD:dist/littlejs.release.js`, { maxBuffer: 1 << 28 }));
-writeFileSync(join(vendor, 'LICENSES', 'littlejs.txt'), execSync(`git -C "${ljs}" show HEAD:LICENSE`));
+  ['playcanvas/LICENSE', 'playcanvas.txt'], ['babylonjs/license.md', 'babylonjs.txt'], ['babylonjs/NOTICE.md', 'babylonjs-NOTICE.txt']])
+  copy(nm(from), join('LICENSES', to));
 
-const git = cmd => execSync(`git -C "${ljs}" ${cmd}`).toString().trim();
-const dirty = git('status --porcelain dist');
-if (dirty) console.warn('WARNING: LittleJS dist/ has uncommitted changes:\n' + dirty);
+const versionsFile = join(vendor, 'versions.json');
+let littlejs = existsSync(versionsFile) ? JSON.parse(readFileSync(versionsFile, 'utf8')).littlejs : undefined;
+if (ljs) {
+  // the committed build, byte for byte: the working tree copy can carry CRLF from core.autocrlf
+  const git = cmd => execSync(`git -C "${ljs}" ${cmd}`, { maxBuffer: 1 << 28 });
+  writeFileSync(join(vendor, 'littlejs.release.js'), git('show HEAD:dist/littlejs.release.js'));
+  writeFileSync(join(vendor, 'LICENSES', 'littlejs.txt'), git('show HEAD:LICENSE'));
+  const dirty = git('status --porcelain dist').toString().trim();
+  if (dirty) console.warn('WARNING: LittleJS dist/ has uncommitted changes (the committed build was used):\n' + dirty);
+  littlejs = { version: JSON.parse(readFileSync(join(ljs, 'package.json'))).version,
+               commit: git('rev-parse --short HEAD').toString().trim(), distDirty: !!dirty };
+} else console.log('LITTLEJS_DIR not set: keeping the vendored LittleJS build'
+  + (littlejs ? ` (${littlejs.version} @ ${littlejs.commit})` : ''));
 
-writeFileSync(join(vendor, 'versions.json'), JSON.stringify({
-  littlejs: { version: JSON.parse(readFileSync(join(ljs, 'package.json'))).version,
-              commit: git('rev-parse --short HEAD'), distDirty: !!dirty },
+writeFileSync(versionsFile, JSON.stringify({
+  littlejs,
   pixi: pkgVersion('pixi.js'),
   three: pkgVersion('three'),
   phaser: pkgVersion('phaser'),
   playcanvas: pkgVersion('playcanvas'),
   babylon: pkgVersion('babylonjs'),
 }, null, 2));
-console.log(readFileSync(join(vendor, 'versions.json'), 'utf8'));
+console.log(readFileSync(versionsFile, 'utf8'));

@@ -9,6 +9,6 @@ The files in `vendor/` are unmodified builds of these engines, redistributed und
 | `three.module.js`, `three.core.js`, `three.webgpu.js` | three.js | MIT ([three.txt](three.txt)) |
 | `phaser.esm.min.js` | Phaser | MIT ([phaser.txt](phaser.txt)) |
 | `playcanvas.min.mjs` | PlayCanvas | MIT ([playcanvas.txt](playcanvas.txt)) |
-| `babylon.js` | Babylon.js | Apache-2.0 ([babylonjs.txt](babylonjs.txt)) |
+| `babylon.js` | Babylon.js | Apache-2.0 ([babylonjs.txt](babylonjs.txt), with its [NOTICE](babylonjs-NOTICE.txt)) |
 
 Exact versions are in [`../versions.json`](../versions.json).

@@ -38,7 +38,7 @@ Bash:
 LITTLEJS_DIR=/c/path/to/LittleJS npm run vendor
 ```
 
-If unset, the default `C:/dev/GitHub/LittleJS` is used.
+If `LITTLEJS_DIR` is not set, the LittleJS build already in `vendor/` is kept and only the other engines are refreshed.
 
 Verify the vendored files:
 
