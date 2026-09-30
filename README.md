@@ -51,7 +51,9 @@ Each engine is tested on its normal path and its fastest documented path. For ex
 
 ## Run it
 
-You need Node 21+ and Chrome, on a machine that is otherwise idle.
+**In your browser, nothing to install:** open https://killedbyapixel.github.io/webgl-engine-bench/, keep the tab visible, click **Run**, then **Download JSON**. A browser run can't record your CPU model, so please mention it when you submit.
+
+**With Node, for the most exact numbers:** you need Node 21+ and Chrome, on a machine that is otherwise idle.
 
 ```bash
 npm install
