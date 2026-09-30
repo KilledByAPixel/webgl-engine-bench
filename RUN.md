@@ -24,7 +24,7 @@ The JSON output records which browser was used in the `channel` field. Node 21 o
 
 ## Optional: benchmark the latest LittleJS
 
-Currently vendored: LittleJS 1.20.0 @ 614e1243 (see `vendor/versions.json`).
+The vendored LittleJS version and commit are recorded in `vendor/versions.json`.
 
 To update from a local checkout, ensure `dist/littlejs.release.js` is rebuilt and committed, then set `LITTLEJS_DIR`:
 
