@@ -2,6 +2,10 @@
 
 How many moving sprites and 3D cubes can a web engine draw while holding 60 fps, on your machine?
 
+![The two benchmark scenes: 2,000 textured, spinning, tinted sprites, and 2,000 lit, textured, tumbling cubes](.github/screenshot.jpg)
+
+*The two scenes, shown here with 2,000 objects each. Every engine draws exactly the same picture; the benchmark keeps adding objects until the engine can no longer hold 60 fps.*
+
 **Engines compared:** LittleJS, PixiJS, Three.js and PlayCanvas, plus an extended set with Phaser, Babylon.js and the WebGPU renderers of Pixi and Three.
 
 This benchmark was started by the author of LittleJS, so read it with that in mind. Every scene, the measurement code and the raw results are here so anyone can check them, rerun them, or improve a scene.
