@@ -5,10 +5,13 @@
   table { border-collapse: collapse; margin: 12px 0; } td, th { padding: 4px 10px; border-bottom: 1px solid #333; text-align: right; }
   td:first-child, th:first-child, td:nth-child(2) { text-align: left; } .err { color: #f77; }
   #frames { margin-top: 12px; }
+  a { color: #7cc4ff; } a:visited { color: #b9a4ff; }
 </style></head>
 <body>
 <h1>WebGL Engine Bench</h1>
-<p>LittleJS vs PixiJS (2D) and Three.js (3D). Keep this tab visible while it runs. Each scene runs in its own iframe below.</p>
+<p>How many moving sprites and 3D cubes can each engine draw at 60 fps on this machine? LittleJS, PixiJS, Three.js and PlayCanvas, plus Phaser, Babylon.js and WebGPU in the extended set.</p>
+<p>Keep this tab visible while it runs; each scene runs in its own frame below. When it finishes, click <b>Download JSON</b> to save your results.</p>
+<p><a href="https://github.com/KilledByAPixel/webgl-engine-bench">Source, results from other machines, and how to submit yours on GitHub</a></p>
 <div id="controls"></div>
 <button id="run">Run</button> <button id="save" disabled>Download JSON</button> <span id="status"></span>
 <div id="frames"></div>
