@@ -93,6 +93,7 @@ Results record your CPU, GPU, OS and browser. They never record your computer's 
 - `tools/`: run, verify, summary and vendor scripts
 - `vendor/`: pinned engine builds; exact versions are in `vendor/versions.json`, licences in `vendor/LICENSES/`
 - `results/`: raw result files
+- `littlejs-bench/`: quick pages for measuring changes to LittleJS itself, not part of this benchmark (see its README)
 
 `npm run verify` re-checks that every scene draws the same thing. `npm test` runs the unit tests.
 

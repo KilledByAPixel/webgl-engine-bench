@@ -7,3 +7,5 @@ docs/
 # only full runs are published; quick, extended-quick and smoke runs stay local
 results/*-quick*.json
 results/*-fixtures.json
+# older LittleJS builds for side by side compares
+littlejs-bench/*.prev.js
